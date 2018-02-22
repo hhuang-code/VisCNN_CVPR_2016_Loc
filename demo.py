@@ -71,7 +71,6 @@ def compute_cam(activation, softmax_weight, class_ids):
         cam =  (cam - cam.min()) / (cam.max() - cam.min())
         # conver to [0, 255]
         cam = np.uint8(255 * cam)
-        pdb.set_trace()
         # reshape to (224, 224)
         cams.append(cv2.resize(cam, (224, 224)))
 
@@ -114,14 +113,16 @@ if __name__ == '__main__':
     for i in range(5):
         print('{:.3f} -> {}'.format(probs[i], labels[idx[i]]))
 
-    # generate class activation map for the top-1 prediction
-    cams = compute_cam(feature_blob[0], softmax_weight, [idx[0]])
+    # generate class activation map for the top-5 prediction
+    cams = compute_cam(feature_blob[0], softmax_weight, idx[0: 5])
 
-    # render cam and original image
-    print('output cam.jpg for the top1 prediction: %s' % labels[idx[0]])
+    for i in range(len(cams)):
+        # render cam and original image
+        filename = labels[idx[i]] + '.jpg'
+        print('output %s for the top-%s prediction: %s' % (filename, (i + 1), labels[idx[i]]))
 
-    img = cv2.imread('./test.jpg')
-    h, w, _ = img.shape
-    heatmap = cv2.applyColorMap(cv2.resize(cams[0], (w, h)), cv2.COLORMAP_JET)
-    result = heatmap * 0.3 + img * 0.5
-    cv2.imwrite('cam.jpg', result)
+        img = cv2.imread('./test.jpg')
+        h, w, _ = img.shape
+        heatmap = cv2.applyColorMap(cv2.resize(cams[0], (w, h)), cv2.COLORMAP_JET)
+        result = heatmap * 0.3 + img * 0.5
+        cv2.imwrite(filename, result)
