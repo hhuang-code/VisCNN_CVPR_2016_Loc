@@ -123,6 +123,6 @@ if __name__ == '__main__':
 
         img = cv2.imread('./test.jpg')
         h, w, _ = img.shape
-        heatmap = cv2.applyColorMap(cv2.resize(cams[0], (w, h)), cv2.COLORMAP_JET)
+        heatmap = cv2.applyColorMap(cv2.resize(cams[i], (w, h)), cv2.COLORMAP_JET)
         result = heatmap * 0.3 + img * 0.5
         cv2.imwrite(filename, result)
